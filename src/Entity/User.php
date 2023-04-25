@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,6 +34,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $Surname = null;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Game::class)]
+    private Collection $Game;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Question::class)]
+    private Collection $Question;
+
+    public function __construct()
+    {
+        $this->Game = new ArrayCollection();
+        $this->Question = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -123,6 +137,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSurname(string $Surname): self
     {
         $this->Surname = $Surname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGame(): Collection
+    {
+        return $this->Game;
+    }
+
+    public function addGame(Game $game): self
+    {
+        if (!$this->Game->contains($game)) {
+            $this->Game->add($game);
+            $game->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): self
+    {
+        if ($this->Game->removeElement($game)) {
+            // set the owning side to null (unless already changed)
+            if ($game->getUserId() === $this) {
+                $game->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Question>
+     */
+    public function getQuestion(): Collection
+    {
+        return $this->Question;
+    }
+
+    public function addQuestion(Question $question): self
+    {
+        if (!$this->Question->contains($question)) {
+            $this->Question->add($question);
+            $question->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuestion(Question $question): self
+    {
+        if ($this->Question->removeElement($question)) {
+            // set the owning side to null (unless already changed)
+            if ($question->getUserId() === $this) {
+                $question->setUserId(null);
+            }
+        }
 
         return $this;
     }
