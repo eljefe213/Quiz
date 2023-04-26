@@ -19,17 +19,21 @@ class Game
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\ManyToMany(targetEntity: Question::class, inversedBy: 'game_id')]
-    private Collection $Question;
+
 
     #[ORM\OneToOne(inversedBy: 'game_id', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Score $Score = null;
 
+    #[ORM\ManyToMany(targetEntity: Question::class, inversedBy: 'games')]
+    private Collection $Question;
+
     public function __construct()
     {
         $this->Question = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -44,6 +48,18 @@ class Game
     public function setUserId(?User $user_id): self
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getScore(): ?Score
+    {
+        return $this->Score;
+    }
+
+    public function setScore(Score $Score): self
+    {
+        $this->Score = $Score;
 
         return $this;
     }
@@ -68,18 +84,6 @@ class Game
     public function removeQuestion(Question $question): self
     {
         $this->Question->removeElement($question);
-
-        return $this;
-    }
-
-    public function getScore(): ?Score
-    {
-        return $this->Score;
-    }
-
-    public function setScore(Score $Score): self
-    {
-        $this->Score = $Score;
 
         return $this;
     }

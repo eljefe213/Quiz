@@ -25,17 +25,22 @@ class Question
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'Question')]
-    private Collection $game_id;
+
 
     #[ORM\OneToMany(mappedBy: 'question_id', targetEntity: Answer::class)]
     private Collection $Answer;
 
+    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'Question')]
+    private Collection $games;
+
     public function __construct()
     {
-        $this->game_id = new ArrayCollection();
-        $this->Answer = new ArrayCollection();
+        $this->games = new ArrayCollection();
     }
+
+
+
+
 
     public function getId(): ?int
     {
@@ -78,32 +83,6 @@ class Question
         return $this;
     }
 
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getGameId(): Collection
-    {
-        return $this->game_id;
-    }
-
-    public function addGameId(Game $gameId): self
-    {
-        if (!$this->game_id->contains($gameId)) {
-            $this->game_id->add($gameId);
-            $gameId->addQuestion($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGameId(Game $gameId): self
-    {
-        if ($this->game_id->removeElement($gameId)) {
-            $gameId->removeQuestion($this);
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Answer>
@@ -130,6 +109,33 @@ class Question
             if ($answer->getQuestionId() === $this) {
                 $answer->setQuestionId(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGames(): Collection
+    {
+        return $this->games;
+    }
+
+    public function addGame(Game $game): self
+    {
+        if (!$this->games->contains($game)) {
+            $this->games->add($game);
+            $game->addQuestion($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): self
+    {
+        if ($this->games->removeElement($game)) {
+            $game->removeQuestion($this);
         }
 
         return $this;

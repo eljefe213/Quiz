@@ -22,6 +22,13 @@
 		<navbar>
 			<ul>
 				<li><a href="{{path('app_home')}}">Home</a></li>
+				{% if app.user %}
+				<li><a href="{{path('app_logout')}}">Logout</a></li>
+				{% endif %}
+				{% if not app.user %}
+				<li><a href="{{path('app_register')}}">Register</a></li>
+				<li><a href="{{path('app_login')}}">Login</a></li>
+				{% endif %}
 			</ul>
 		</navbar>
 		{% block body %}{% endblock %}
