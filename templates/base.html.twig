@@ -23,6 +23,7 @@
 			<ul>
 				<li><a href="{{path('app_home')}}">Home</a></li>
 				{% if app.user %}
+				<li><a href="{{path('app_question')}}">Afficher toutes les questions </a></li>
 				<li><a href="{{path('app_logout')}}">Logout</a></li>
 				{% endif %}
 				{% if not app.user %}

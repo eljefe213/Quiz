@@ -14,6 +14,8 @@
     <button><a href="{{path('app_register')}}">S'inscrire</a></button>
     <button><a href= "{{path('app_login')}}">S'identifier</a></button>
     {% endif %}
+    {% if app.user %}
     <button><a href="{{path('app_logout')}}">Lancer une partie 🎮 </a></button>
+    {% endif %}
 </div>
 {% endblock %}
