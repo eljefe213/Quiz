@@ -18,6 +18,12 @@
 		{% endblock %}
 	</head>
 	<body>
+		{# navbar #}
+		<navbar>
+			<ul>
+				<li><a href="{{path('app_home')}}">Home</a></li>
+			</ul>
+		</navbar>
 		{% block body %}{% endblock %}
 	</body>
 </html>
