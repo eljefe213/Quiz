@@ -9,14 +9,15 @@
 </style>
 
 <div class="example-wrapper">
-    {% for question in questions %}
-        <p>{{question.question}}</p>
-        
+        {% for question in game.getQuestion %}
+            <p>{{ question.getQuestion }}</p>
             <ul>
-        {% for answer in question.getAnswer %}
-                <li><button>{{answer.answer}}</button></li>
-        {% endfor %}
+                {% for answer in question.getAnswer %}
+                    <li>
+                        <a href="{{path('game_question_response',{'id_game':game.id,'id_answer':answer.id})}}"><button class="answer-btn">{{ answer.answer }}</button></a>
+                    </li>
+                {% endfor %}
             </ul>
-    {% endfor %}
-</div>
+        {% endfor %}
+    </div>
 {% endblock %}

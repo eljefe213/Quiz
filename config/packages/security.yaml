@@ -32,8 +32,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/answer, roles: ROLE_ADMIN }
+         - { path: ^/question, roles: ROLE_ADMIN }
+         - { path: ^/questions, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+    access_denied_url: /
 
 when@test:
     security:
