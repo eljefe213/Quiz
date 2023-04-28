@@ -5,13 +5,16 @@ namespace App\Controller;
 
 use App\Entity\Answer;
 use App\Entity\Game;
+use App\Entity\GameQuestion;
 use App\Entity\Score;
 use App\Repository\AnswerRepository;
+use App\Repository\GameQuestionRepository;
 use App\Repository\GameRepository;
 use App\Repository\QuestionRepository;
 use App\Repository\ScoreRepository;
 use App\Service\ScoreManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,12 +43,17 @@ class GameController extends AbstractController
         $game->setUserId($user);
 
         $score = new Score();
-        $score->setGameId($game);
+        $score->setGame($game);
         $score->setScore(0);
 
         // ajouter chaque question sélectionnée à l'objet Game
         foreach ($questions as $question) {
-            $game->addQuestion($question);
+            $gameQuestion = new GameQuestion();
+            $gameQuestion->setGame($game);
+            $gameQuestion->setQuestion($question);
+            $gameQuestion->setIsResponse(false);
+
+            $entityManager->persist($gameQuestion);
         }
 
         // enregistrer l'objet Game en base de données
@@ -61,22 +69,24 @@ class GameController extends AbstractController
     }
 
     #[Route('/game/{id}', name: 'app_game')]
-    public function index(QuestionRepository $questionRepository, $id, GameRepository $gameRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function index($id, GameRepository $gameRepository): Response
     {
         $game = $gameRepository->find($id);
-        //dd($game);
+        // $gameQuestions = $game->getGameQuestions();
+        // foreach($gameQuestions as $gameQuestion  ){dd($gameQuestion);};
+
         return $this->render('game/index.html.twig', [
             'game' => $game,
         ]);
     }
 
     #[Route('/game/{id_game}/{id_answer}', name: 'game_question_response')]
-    public function question_response($id_game, $id_answer, GameRepository $gameRepository, AnswerRepository $answerRepository, ScoreRepository $scoreRepository)
+    public function question_response($id_game, $id_answer, GameRepository $gameRepository, AnswerRepository $answerRepository, ScoreRepository $scoreRepository, GameQuestionRepository $gameQuestionRepository)
     {
         $answer = $answerRepository->find($id_answer);
+        $game = $gameRepository->find($id_game);
 
         if ($answer->isIsTrue() === true) {
-            $game = $gameRepository->find($id_game);
             $score_id = $game->getScore();
             $score = $scoreRepository->find($score_id);
 
@@ -84,6 +94,17 @@ class GameController extends AbstractController
             $score->setScore($score_get + 1);
 
             $scoreRepository->save($score, true);
+        }
+        // Trouver la GameQuestion correspondant à la question et au jeu en cours
+        $gameQuestion = $answer->getQuestionId()->getGameQuestions()->filter(function (GameQuestion $gameQuestion) use ($game) {
+            return $gameQuestion->getGame() === $game;
+        })->first();
+
+        // Mettre à jour la propriété isResponse de la GameQuestion
+        if ($gameQuestion) {
+            $gameQuestion->setIsResponse(true);
+
+            $gameQuestionRepository->save($gameQuestion, true);
         }
         //dd($question);
         return $this->redirectToRoute('app_game', ['id' => $id_game], Response::HTTP_SEE_OTHER);

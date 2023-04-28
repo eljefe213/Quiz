@@ -9,15 +9,32 @@
 </style>
 
 <div class="example-wrapper">
-        {% for question in game.getQuestion %}
-            <p>{{ question.getQuestion }}</p>
-            <ul>
-                {% for answer in question.getAnswer %}
-                    <li>
-                        <a href="{{path('game_question_response',{'id_game':game.id,'id_answer':answer.id})}}"><button class="answer-btn">{{ answer.answer }}</button></a>
-                    </li>
-                {% endfor %}
-            </ul>
+
+        {% set remainingQuestions = 0 %}
+        {% for gameQuestion in game.getGameQuestions %}
+            {% if gameQuestion.isResponse == false %}
+                {% set question = gameQuestion.getQuestion %}
+                <p>{{ question.getQuestion }}</p>
+                <ul>
+                    {% for answer in question.getAnswer %}
+                        <li>
+                            <a href="{{ path('game_question_response', {'id_game': game.id, 'id_answer': answer.id}) }}">
+                                <button class="my-1 answer-btn btn btn-info">{{ answer.answer }}</button>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% set remainingQuestions = remainingQuestions + 1 %}
+            {% endif %}
         {% endfor %}
+
+        {% if remainingQuestions == 0 %}
+            <a href="{{ path('app_game_create') }}" class="btn btn-primary">
+                Rejouer
+            </a>
+            <a href="{{ path('app_score') }}" class="btn btn-primary">
+                Voir les Scores
+            </a>
+        {% endif %}
     </div>
 {% endblock %}

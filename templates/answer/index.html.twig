@@ -13,12 +13,10 @@
         {% for answer in question.getAnswer %}
             <p>{{answer.answer}}</p>
             <div>
-                <a href="{{path('edit_answer',{'id':answer.id})}}">
-                    <button>Edit</button>
-                </a>
-                <a href="{{path('delete_answer',{'id':answer.id})}}">
-                    <button>Delete</button>
-                </a>
+                <a href="{{path('edit_answer',{'id':answer.id})}}" class="btn btn-primary">Edit </a>
+                    
+               
+                <a href="{{path('delete_answer',{'id':answer.id})}}" class="btn btn-primary">Delete</a>
             </div>
         {% endfor %}
     </div>

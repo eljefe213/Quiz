@@ -10,7 +10,7 @@
 
 <div class="example-wrapper">
     <div>
-        <a href="{{path('create_question')}}"><button>Ajouter une question</button></a>
+        <a href="{{path('create_question')}}" class="btn btn-primary">Ajouter une question</a>
     </div>
         {% for question in questions %}
             <div>
@@ -18,16 +18,16 @@
                 </p>
                 <p>{{question.question}}</p>
                 <p>
-                    <a href="{{path('edit_question',{'id':question.id})}}"><button>Edit</button></a>
+                    <a href="{{path('edit_question',{'id':question.id})}}" class="btn btn-primary">Edit</a>
                 </p>
                 <p>
-                    <a href="{{path('delete_question',{'id':question.id})}}"><button>Delete</button></a>
+                    <a href="{{path('delete_question',{'id':question.id})}}" class="btn btn-primary">Delete</a>
                 </p>
                 <p>
-                    <a href="{{path('create_answer',{'id':question.id})}}"><button>Ajouter la bonne réponse</button></a>
+                    <a href="{{path('create_answer',{'id':question.id})}}" class="btn btn-primary">Ajouter la bonne réponse</a>
                 </p>
                 <p>
-                    <a href="{{path('create_false_answer',{'id':question.id})}}"><button>Ajouter une mauvaise réponse</button></a>
+                    <a href="{{path('create_false_answer',{'id':question.id})}}" class="btn btn-primary">Ajouter une mauvaise réponse</a>
                 </p>
                 {% include 'answer/index.html.twig' with {'question.id':question } %}
             </div>

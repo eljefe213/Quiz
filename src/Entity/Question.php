@@ -30,13 +30,16 @@ class Question
     #[ORM\OneToMany(mappedBy: 'question_id', targetEntity: Answer::class)]
     private Collection $Answer;
 
-    #[ORM\ManyToMany(targetEntity: Game::class, mappedBy: 'Question')]
-    private Collection $games;
+    #[ORM\OneToMany(mappedBy: 'Question', targetEntity: GameQuestion::class)]
+    private Collection $gameQuestions;
 
     public function __construct()
     {
-        $this->games = new ArrayCollection();
+        $this->Answer = new ArrayCollection();
+        $this->gameQuestions = new ArrayCollection();
     }
+
+
 
 
 
@@ -115,27 +118,30 @@ class Question
     }
 
     /**
-     * @return Collection<int, Game>
+     * @return Collection<int, GameQuestion>
      */
-    public function getGames(): Collection
+    public function getGameQuestions(): Collection
     {
-        return $this->games;
+        return $this->gameQuestions;
     }
 
-    public function addGame(Game $game): self
+    public function addGameQuestion(GameQuestion $gameQuestion): self
     {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->addQuestion($this);
+        if (!$this->gameQuestions->contains($gameQuestion)) {
+            $this->gameQuestions->add($gameQuestion);
+            $gameQuestion->setQuestion($this);
         }
 
         return $this;
     }
 
-    public function removeGame(Game $game): self
+    public function removeGameQuestion(GameQuestion $gameQuestion): self
     {
-        if ($this->games->removeElement($game)) {
-            $game->removeQuestion($this);
+        if ($this->gameQuestions->removeElement($gameQuestion)) {
+            // set the owning side to null (unless already changed)
+            if ($gameQuestion->getQuestion() === $this) {
+                $gameQuestion->setQuestion(null);
+            }
         }
 
         return $this;

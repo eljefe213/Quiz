@@ -16,8 +16,9 @@ class Score
     #[ORM\Column(length: 255)]
     private ?string $Score = null;
 
-    #[ORM\OneToOne(mappedBy: 'Score', cascade: ['persist', 'remove'])]
-    private ?Game $game_id = null;
+    #[ORM\OneToOne(mappedBy: 'score', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: "score_id", referencedColumnName: "id")]
+    private ?Game $Game = null;
 
     public function getId(): ?int
     {
@@ -36,19 +37,19 @@ class Score
         return $this;
     }
 
-    public function getGameId(): ?Game
+    public function getGame(): ?Game
     {
-        return $this->game_id;
+        return $this->Game;
     }
 
-    public function setGameId(Game $game_id): self
+    public function setGame(Game $game): self
     {
         // set the owning side of the relation if necessary
-        if ($game_id->getScore() !== $this) {
-            $game_id->setScore($this);
+        if ($game->getScore() !== $this) {
+            $game->setScore($this);
         }
 
-        $this->game_id = $game_id;
+        $this->Game = $game;
 
         return $this;
     }
